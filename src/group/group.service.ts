@@ -12,15 +12,15 @@ export class GroupService {
     return `This action returns all group`;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     return `This action returns a #${id} group`;
   }
 
-  update(id: number, updateGroupDto: UpdateGroupDto) {
+  update(id: string, updateGroupDto: UpdateGroupDto) {
     return `This action updates a #${id} group`;
   }
 
-  remove(id: number) {
+  remove(id: string) {
     return `This action removes a #${id} group`;
   }
 }
