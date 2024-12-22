@@ -13,7 +13,6 @@ export class UserService {
   async create(createUserDto: CreateUserDto): Promise<Omit<User, 'password'>> {
     const newUser = await this.userModel.create(createUserDto);
     newUser.save();
-    console.log(newUser);
 
     if (!newUser) {
       throw new MyInternalServerError('Error while creating user');

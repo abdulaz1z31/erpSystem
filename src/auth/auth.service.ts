@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { Injectable } from '@nestjs/common';
 import { registerDto } from './dto/register.dto';
 import { loginDto } from './dto/login.dto';
@@ -11,6 +10,8 @@ import { MyBadRequiesError } from 'src/errors/errors';
 import { OtpService } from 'src/otp/otp.service';
 import { Hashing } from 'src/hashing/hash';
 import { EmailService } from 'src/email/mailer';
+import { JwtService } from '@nestjs/jwt';
+import { EnvService } from 'src/config/config.service';
 
 @Injectable()
 export class AuthService {
@@ -20,6 +21,8 @@ export class AuthService {
     private otpService: OtpService,
     private hashService: Hashing,
     private emailService: EmailService,
+    private jwtService: JwtService,
+    private envService: EnvService,
   ) {}
 
   async register(userData: registerDto) {
@@ -73,8 +76,48 @@ export class AuthService {
       statusCode: 200,
     };
   }
-  async login(userData: loginDto) {
-    return;
+  async login(
+    userData: loginDto,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    let curUser: any;
+    if (userData.email) {
+      curUser = await this.userModel.findOne({
+        email: userData.email,
+      });
+    } else {
+      curUser = await this.userModel.findOne({
+        username: userData.username,
+      });
+    }
+    if (!curUser) {
+      throw new MyBadRequiesError('User not found');
+    }
+    if (!curUser.isActive) {
+      throw new MyBadRequiesError('Account not verified');
+    }
+    const check = await this.hashService.compare(
+      userData.password,
+      curUser.password,
+    );
+    if (!check) {
+      throw new MyBadRequiesError('Username or password wrong');
+    }
+    const payload = {
+      id: curUser._id,
+      username: curUser.username,
+      role: curUser.role,
+      isActive: curUser.isActive,
+    };
+    const accessToken = await this.jwtService.signAsync(payload, {
+      secret: this.envService.get('ACCESS_SECRET'),
+      expiresIn: this.envService.get('ACCESS_EXPIRES_IN'),
+    });
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      secret: this.envService.get('REFRESH_SECRET'),
+      expiresIn: this.envService.get('REFRESH_EXPIRES_IN'),
+    });
+
+    return { accessToken, refreshToken };
   }
 
   async getMe() {

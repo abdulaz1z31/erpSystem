@@ -11,6 +11,10 @@ import { EmailModule } from './email/email.module';
 import { ConfigModule } from './config/config.module';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
+import { RoleModule } from './roles/roles.module';
+import { APP_GUARD } from '@nestjs/core';
+import { RolesGuard } from './roles/role';
+import { AuthGuard } from './auth/guard/auth.guard';
 
 @Module({
   imports: [
@@ -37,17 +41,18 @@ import { ConfigService } from '@nestjs/config';
         },
       }),
     }),
+    RoleModule,
   ],
   controllers: [],
   providers: [
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: AuthGuard,
-    // },
-    // {
-    //   provide: APP_GUARD,
-    //   useClass: RolesGuard,
-    // },
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+    {
+      provide: APP_GUARD,
+      useClass: RolesGuard,
+    },
   ],
 })
 export class AppModule {}

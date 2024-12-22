@@ -8,7 +8,7 @@ export class Hashing {
   async generate(password: string) {
     return await bcrypt.hash(password, this.salt);
   }
-  async compate(password: string, hashPassword: string) {
+  async compare(password: string, hashPassword: string) {
     return await bcrypt.compare(password, hashPassword);
   }
 }

@@ -3,6 +3,7 @@ import { AuthService } from './auth.service';
 import { registerDto } from './dto/register.dto';
 import { loginDto } from './dto/login.dto';
 import { verifyDataDto } from './dto/verify.dto';
+import { Public } from './guard/public.decarators';
 
 @Controller('auth')
 export class AuthController {
@@ -12,7 +13,7 @@ export class AuthController {
   async register(@Body() userData: registerDto) {
     return await this.authService.register(userData);
   }
-
+  @Public()
   @Post('login')
   async login(@Body() userData: loginDto) {
     return await this.authService.login(userData);

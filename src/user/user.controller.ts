@@ -10,6 +10,8 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { Roles } from 'src/roles/roles.decarator';
+import { userRole } from './constants/user.constants';
 
 @Controller('user')
 export class UserController {
@@ -19,7 +21,7 @@ export class UserController {
   create(@Body() createUserDto: CreateUserDto) {
     return this.userService.create(createUserDto);
   }
-
+  @Roles(userRole.teacher, userRole.manager)
   @Get()
   findAll() {
     return this.userService.findAll();

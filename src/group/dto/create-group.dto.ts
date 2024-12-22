@@ -1,10 +1,25 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
 
 export class CreateGroupDto {
+  @ApiProperty({
+    description: 'Name of group',
+    example: 'Bootcamp FullStack N14',
+  })
   @IsNotEmpty()
   name: string;
+
+  @ApiProperty({
+    description: 'Description of group',
+    example: 'FullStack node+reactjs course',
+  })
   @IsNotEmpty()
   description: string;
+
+  @ApiProperty({
+    description: ' of group',
+    example: 'Bootcamp FullStack N14',
+  })
   @IsNotEmpty()
   course_id: string;
   @IsNotEmpty()
